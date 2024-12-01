@@ -99,6 +99,18 @@ const ArchitecturalDashboard = () => {
       location: 'Ankara, Turkey',
       description: 'A light-filled retail mall with an observation tower.',
     },
+    {
+      name: 'Atakule',
+      countryCode: 'TR',
+      location: 'Ankara, Turkey',
+      description: 'A light-filled retail mall with an observation tower.',
+    },
+    {
+      name: 'Atakule',
+      countryCode: 'TR',
+      location: 'Ankara, Turkey',
+      description: 'A light-filled retail mall with an observation tower.',
+    },
   ];
 
   const handleDownload = (building) => {
