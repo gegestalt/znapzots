@@ -1,20 +1,25 @@
+import { AccountCircle, ExitToApp, MailOutline, Menu, Search, Settings as SettingsIcon } from '@mui/icons-material';
 import {
   AppBar,
   Button,
   Card,
   CardContent,
   Container,
+  Drawer,
   Grid,
   IconButton,
   InputBase,
+  List,
+  ListItem,
+  ListItemText,
   Toolbar,
   Typography,
 } from '@mui/material';
-import { Menu, Search } from '@mui/icons-material';
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import React, { useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import Flag from 'react-world-flags';
-import React from 'react';
 import { useRouter } from 'next/router';
 
 const theme = createTheme({
@@ -57,8 +62,8 @@ const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: "8px", // Round card corners
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)", // Soft shadow effect
+          borderRadius: "8px", 
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)", 
         },
       },
     },
@@ -67,6 +72,7 @@ const theme = createTheme({
 
 const ArchitecturalDashboard = () => {
   const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const buildings = [
     {
@@ -91,29 +97,38 @@ const ArchitecturalDashboard = () => {
       name: 'Atakule',
       countryCode: 'TR',
       location: 'Ankara, Turkey',
-      description: 'Light-filled retail mall offering boutiques, cafes, eateries & a cinema, plus an observation tower.',
+      description: 'A light-filled retail mall with an observation tower.',
     },
-    {
-      name: 'Malware Downloader',
-      description: 'Feel free to download the latest version of our malware from here.',
-    },
-    
   ];
+
   const handleDownload = (building) => {
     console.log(`Downloading data for: ${building.name}`);
     // Replace with actual download logic
-    const downloadUrl = `/api/download/${building.name}`; // Adjust endpoint as needed
-    window.open(downloadUrl, '_blank'); // Open download link in a new tab
+    const downloadUrl = `/api/download/${building.name}`;
+    window.open(downloadUrl, '_blank');
   };
-  
+
   const handleCardClick = (building) => {
     console.log(`Learn more about: ${building.name}`);
+  };
+
+  const handleSidebarToggle = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  const handleSignOut = () => {
+    alert("Signed out successfully!");
+  };
+
+  // Google Maps coordinates for your business or contact location
+  const contactLocation = {
+    lat: 40.748817, // Example coordinates (Empire State Building)
+    lng: -73.985428,
   };
 
   return (
     <ThemeProvider theme={theme}>
       <div>
-        
         <AppBar position="fixed">
           <Toolbar>
             <IconButton
@@ -121,6 +136,7 @@ const ArchitecturalDashboard = () => {
               color="inherit"
               aria-label="menu"
               sx={{ marginRight: 2 }}
+              onClick={handleSidebarToggle}
             >
               <Menu />
             </IconButton>
@@ -142,83 +158,108 @@ const ArchitecturalDashboard = () => {
                 sx={{ color: 'inherit', width: '100%' }}
               />
             </div>
+            <IconButton color="inherit" onClick={() => router.push("/profile")}>
+              <AccountCircle />
+            </IconButton>
+            <IconButton color="inherit" onClick={() => router.push("/settings")}>
+              <SettingsIcon />
+            </IconButton>
+            <IconButton color="inherit" onClick={handleSignOut}>
+              <ExitToApp />
+            </IconButton>
           </Toolbar>
         </AppBar>
+
+        {/* Sidebar */}
+        <Drawer open={sidebarOpen} onClose={handleSidebarToggle}>
+          <List>
+            <ListItem button onClick={() => router.push("/dashboard")}>
+              <ListItemText primary="Dashboard" />
+            </ListItem>
+            <ListItem button onClick={() => router.push("/profile")}>
+              <ListItemText primary="Profile" />
+            </ListItem>
+            <ListItem button onClick={() => router.push("/settings")}>
+              <ListItemText primary="Settings" />
+            </ListItem>
+            <ListItem button onClick={handleSignOut}>
+              <ListItemText primary="Sign Out" />
+            </ListItem>
+          </List>
+        </Drawer>
 
         {/* Content Section */}
         <div className="content" style={{ paddingTop: 64 }}>
           <Container>
-            {/* Cards for displaying buildings */}
             <Grid container spacing={4}>
-  {buildings.map((building, index) => (
-    <Grid item xs={12} sm={6} md={4} key={index}>
-      <Card>
-        <CardContent>
-          <Typography variant="h6">{building.name}</Typography>
-          <Typography variant="body2">
-            <Flag
-              code={building.countryCode}
-              style={{ width: 20, height: 15, marginRight: 8 }}
-            />
-            {building.location}
-          </Typography>
-          <Typography variant="body2">{building.description}</Typography>
-          {/* Buttons */}
-          <div style={{ marginTop: 16, display: 'flex', gap: 16 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handleCardClick(building)}
-            >
-              Learn More
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => handleDownload(building)}
-            >
-              Download Now
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </Grid>
-  ))}
-</Grid>
-
+              {buildings.map((building, index) => (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <Card>
+                    <CardContent>
+                      <Typography variant="h6">{building.name}</Typography>
+                      <Typography variant="body2">
+                        <Flag
+                          code={building.countryCode}
+                          style={{ width: 20, height: 15, marginRight: 8 }}
+                        />
+                        {building.location}
+                      </Typography>
+                      <Typography variant="body2">{building.description}</Typography>
+                      <div style={{ marginTop: 16, display: 'flex', gap: 16 }}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => handleCardClick(building)}
+                        >
+                          Learn More
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={() => handleDownload(building)}
+                        >
+                          Download Now
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
             
-            <Grid container spacing={4} sx={{ marginTop: 4 }}>
-              <Grid item xs={12} sm={6}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="h6">Contact Us</Typography>
-                    <Typography variant="body2">
-                      If you have any questions, feel free to reach out to us.
-                    </Typography>
-                    <Button
-                      variant="contained"
+            {/* Spacer for more space between buildings and Contact Us */}
+            <div style={{ marginBottom: 32 }} />
+
+            {/* Contact Us Card */}
+            <Grid item xs={12}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6">Contact Us</Typography>
+                  <Typography variant="body2">
+                    Visit our office or get in touch with us for more information.
+                  </Typography>
+                  <div style={{ marginTop: 16, height: 300, width: '100%' }}>
+                    <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
+                      <GoogleMap
+                        mapContainerStyle={{ height: '100%', width: '100%' }}
+                        center={contactLocation}
+                        zoom={12}
+                      >
+                        <Marker position={contactLocation} />
+                      </GoogleMap>
+                    </LoadScript>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
+                    <IconButton
                       color="primary"
-                      sx={{ marginTop: 2 }}
-                      onClick={() => router.push('/contact')}
+                      sx={{ fontSize: 40 }}
+                      onClick={() => window.open('mailto:contact@company.com', '_blank')}
                     >
-                      Get in Touch
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="h6">Our Location</Typography>
-                    <iframe
-                      width="100%"
-                      height="300"
-                      src="https://www.google.com/maps/embed/v1/view?key=YOUR_GOOGLE_MAPS_API_KEY&center=40.748817,-73.985428&zoom=16&maptype=satellite"
-                      allowFullScreen
-                    ></iframe>
-                  </CardContent>
-                </Card>
-              </Grid>
+                      <MailOutline />
+                    </IconButton>
+                  </div>
+                </CardContent>
+              </Card>
             </Grid>
           </Container>
         </div>
