@@ -79,37 +79,37 @@ const ArchitecturalDashboard = () => {
       name: 'Empire State Building',
       countryCode: 'US',
       location: 'New York, USA',
-      description: 'A famous skyscraper in New York City.',
+      description: 'Відомий хмарочос у Нью-Йорку.',
     },
     {
       name: 'Eiffel Tower',
       countryCode: 'FR',
       location: 'Paris, France',
-      description: 'A wrought-iron lattice tower in Paris.',
+      description: 'Кована ґратчаста вежа в Парижі.',
     },
     {
       name: 'Burj Khalifa',
       countryCode: 'AE',
       location: 'Dubai, UAE',
-      description: 'The tallest building in the world.',
+      description: 'Найвища будівля в світі.',
     },
     {
       name: 'Atakule',
       countryCode: 'TR',
       location: 'Ankara, Turkey',
-      description: 'A light-filled retail mall with an observation tower.',
+      description: 'Світлий торговий центр із оглядовою вежею.',
     },
     {
       name: 'Atakule',
       countryCode: 'TR',
       location: 'Ankara, Turkey',
-      description: 'A light-filled retail mall with an observation tower.',
+      description: 'Світлий торговий центр із оглядовою вежею.',
     },
     {
       name: 'Atakule',
       countryCode: 'TR',
       location: 'Ankara, Turkey',
-      description: 'A light-filled retail mall with an observation tower.',
+      description: 'Світлий торговий центр із оглядовою вежею.',
     },
   ];
 
@@ -153,7 +153,7 @@ const ArchitecturalDashboard = () => {
               <Menu />
             </IconButton>
             <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              Architectural Dashboard
+            Вулиця Схід
             </Typography>
             <div
               style={{
@@ -239,7 +239,6 @@ const ArchitecturalDashboard = () => {
               ))}
             </Grid>
             
-            {/* Spacer for more space between buildings and Contact Us */}
             <div style={{ marginBottom: 32 }} />
 
             {/* Contact Us Card */}
