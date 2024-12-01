@@ -16,10 +16,11 @@ import {
   Typography,
 } from '@mui/material';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import Flag from 'react-world-flags';
+import jwt from 'jsonwebtoken';
 import { useRouter } from 'next/router';
 
 const theme = createTheme({
@@ -74,6 +75,48 @@ const ArchitecturalDashboard = () => {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check for JWT token in localStorage
+    const token = localStorage.getItem('access_token');
+
+    // Verify if token exists and is valid
+    if (token) {
+      try {
+        const decoded = jwt.decode(token);
+        if (decoded && decoded.exp * 1000 > Date.now()) {
+          setIsAuthenticated(true);  // Valid token, user is authenticated
+        } else {
+          setIsAuthenticated(false);  // Invalid token or expired
+          localStorage.removeItem('access_token');  // Clear invalid token
+        }
+      } catch (error) {
+        setIsAuthenticated(false);
+        localStorage.removeItem('access_token');  // Clear invalid token
+      }
+    } else {
+      setIsAuthenticated(false);  // No token, not authenticated
+    }
+  }, []);
+
+  useEffect(() => {
+    // If not authenticated, redirect to the login page
+    if (!isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isAuthenticated, router]);
+
+  const handleSidebarToggle = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem('access_token'); // Remove token on sign-out
+    alert("Signed out successfully!");
+    router.push('/login'); // Redirect to login
+  };
+
   const buildings = [
     {
       name: 'Empire State Building',
@@ -124,153 +167,139 @@ const ArchitecturalDashboard = () => {
     console.log(`Learn more about: ${building.name}`);
   };
 
-  const handleSidebarToggle = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
-  const handleSignOut = () => {
-    alert("Signed out successfully!");
-  };
-
-  // Google Maps coordinates for your business or contact location
-  const contactLocation = {
-    lat: 40.748817, // Example coordinates (Empire State Building)
-    lng: -73.985428,
-  };
-
   return (
     <ThemeProvider theme={theme}>
       <div>
-        <AppBar position="fixed">
-          <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ marginRight: 2 }}
-              onClick={handleSidebarToggle}
-            >
-              <Menu />
-            </IconButton>
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Вулиця Схід
-            </Typography>
-            <div
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                borderRadius: 4,
-                display: 'flex',
-                alignItems: 'center',
-                padding: '0 10px',
-              }}
-            >
-              <Search sx={{ color: 'white', marginRight: 1 }} />
-              <InputBase
-                placeholder="Search..."
-                sx={{ color: 'inherit', width: '100%' }}
-              />
-            </div>
-            <IconButton color="inherit" onClick={() => router.push("/profile")}>
-              <AccountCircle />
-            </IconButton>
-            <IconButton color="inherit" onClick={() => router.push("/settings")}>
-              <SettingsIcon />
-            </IconButton>
-            <IconButton color="inherit" onClick={handleSignOut}>
-              <ExitToApp />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <Drawer open={sidebarOpen} onClose={handleSidebarToggle}>
-          <List>
-            <ListItem button onClick={() => router.push("/dashboard")}>
-              <ListItemText primary="Dashboard" />
-            </ListItem>
-            <ListItem button onClick={() => router.push("/profile")}>
-              <ListItemText primary="Profile" />
-            </ListItem>
-            <ListItem button onClick={() => router.push("/settings")}>
-              <ListItemText primary="Settings" />
-            </ListItem>
-            <ListItem button onClick={handleSignOut}>
-              <ListItemText primary="Sign Out" />
-            </ListItem>
-          </List>
-        </Drawer>
+        {/* Only render the dashboard content if authenticated */}
+        {isAuthenticated ? (
+          <>
+            <AppBar position="fixed">
+              <Toolbar>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  sx={{ marginRight: 2 }}
+                  onClick={handleSidebarToggle}
+                >
+                  <Menu />
+                </IconButton>
+                <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                  Вулиця Схід
+                </Typography>
+                <div
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                    borderRadius: 4,
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '0 10px',
+                  }}
+                >
+                  <Search sx={{ color: 'white', marginRight: 1 }} />
+                  <InputBase
+                    placeholder="Search..."
+                    sx={{ color: 'inherit', width: '100%' }}
+                  />
+                </div>
+                <IconButton color="inherit" onClick={() => router.push("/profile")}>
+                  <AccountCircle />
+                </IconButton>
+                <IconButton color="inherit" onClick={() => router.push("/settings")}>
+                  <SettingsIcon />
+                </IconButton>
+                <IconButton color="inherit" onClick={handleSignOut}>
+                  <ExitToApp />
+                </IconButton>
+              </Toolbar>
+            </AppBar>
+            <Drawer open={sidebarOpen} onClose={handleSidebarToggle}>
+              <List>
+                <ListItem button onClick={() => router.push("/dashboard")}>
+                  <ListItemText primary="Dashboard" />
+                </ListItem>
+                <ListItem button onClick={() => router.push("/profile")}>
+                  <ListItemText primary="Profile" />
+                </ListItem>
+                <ListItem button onClick={() => router.push("/settings")}>
+                  <ListItemText primary="Settings" />
+                </ListItem>
+                <ListItem button onClick={handleSignOut}>
+                  <ListItemText primary="Sign Out" />
+                </ListItem>
+              </List>
+            </Drawer>
 
-        {/* Content Section */}
-        <div className="content" style={{ paddingTop: 64 }}>
-          <Container>
-            <Grid container spacing={4}>
-              {buildings.map((building, index) => (
-                <Grid item xs={12} sm={6} md={4} key={index}>
+            {/* Content Section */}
+            <div className="content" style={{ paddingTop: 64 }}>
+              <Container>
+                <Grid container spacing={4}>
+                  {buildings.map((building, index) => (
+                    <Grid item xs={12} sm={6} md={4} key={index}>
+                      <Card>
+                        <CardContent>
+                          <Typography variant="h6">{building.name}</Typography>
+                          <Typography variant="body2">
+                            <Flag
+                              code={building.countryCode}
+                              style={{ width: 20, height: 15, marginRight: 8 }}
+                            />
+                            {building.location}
+                          </Typography>
+                          <Typography variant="body2">{building.description}</Typography>
+                          <div style={{ marginTop: 16, display: 'flex', gap: 16 }}>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => handleCardClick(building)}
+                            >
+                              Learn More
+                            </Button>
+                            <Button
+                              variant="contained"
+                              color="secondary"
+                              onClick={() => handleDownload(building)}
+                            >
+                              Download Now
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+
+                <div style={{ marginBottom: 32 }} />
+
+                <Grid item xs={12}>
                   <Card>
                     <CardContent>
-                      <Typography variant="h6">{building.name}</Typography>
+                      <Typography variant="h6">Contact Us</Typography>
                       <Typography variant="body2">
-                        <Flag
-                          code={building.countryCode}
-                          style={{ width: 20, height: 15, marginRight: 8 }}
-                        />
-                        {building.location}
+                        Відвідайте наш офіс або зв’яжіться з нами для отримання додаткової інформації.
                       </Typography>
-                      <Typography variant="body2">{building.description}</Typography>
-                      <div style={{ marginTop: 16, display: 'flex', gap: 16 }}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => handleCardClick(building)}
-                        >
-                          Learn More
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="secondary"
-                          onClick={() => handleDownload(building)}
-                        >
-                          Download Now
-                        </Button>
+                      <div style={{ marginTop: 16, height: 300, width: '100%' }}>
+                        <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
+                          <GoogleMap
+                            mapContainerStyle={{ height: '100%', width: '100%' }}
+                            center={contactLocation}
+                            zoom={12}
+                          >
+                            <Marker position={contactLocation} />
+                          </GoogleMap>
+                        </LoadScript>
+                      </div>
+                      <div style={{ display: 'flex', marginTop: 16 }}>
+                        <MailOutline sx={{ marginRight: 1 }} />
+                        <Typography variant="body2">info@example.com</Typography>
                       </div>
                     </CardContent>
                   </Card>
                 </Grid>
-              ))}
-            </Grid>
-            
-            <div style={{ marginBottom: 32 }} />
-
-            {/* Contact Us Card */}
-            <Grid item xs={12}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6">Contact Us</Typography>
-                  <Typography variant="body2">
-                  Відвідайте наш офіс або зв’яжіться з нами для отримання додаткової інформації.                  </Typography>
-                  <div style={{ marginTop: 16, height: 300, width: '100%' }}>
-                    <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
-                      <GoogleMap
-                        mapContainerStyle={{ height: '100%', width: '100%' }}
-                        center={contactLocation}
-                        zoom={12}
-                      >
-                        <Marker position={contactLocation} />
-                      </GoogleMap>
-                    </LoadScript>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
-                    <IconButton
-                      color="primary"
-                      sx={{ fontSize: 40 }}
-                      onClick={() => window.open('mailto:contact@company.com', '_blank')}
-                    >
-                      <MailOutline />
-                    </IconButton>
-                  </div>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Container>
-        </div>
+              </Container>
+            </div>
+          </>
+        ) : null}
       </div>
     </ThemeProvider>
   );

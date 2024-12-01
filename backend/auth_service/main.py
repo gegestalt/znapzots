@@ -25,7 +25,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
-# Mock database
 fake_users_db = {
     "user@example.com": {
         "username": "user@example.com",
@@ -84,14 +83,21 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 @app.get("/menu")
 async def get_menu(token: str = Depends(oauth2_scheme)):
     """Protected route: Returns menu data for authenticated users."""
+    if not token:
+        # If no token is provided, return a 401 Unauthorized error
+        raise HTTPException(status_code=401, detail="Unauthorized access. Please log in.")
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
             raise HTTPException(status_code=401, detail="Invalid token")
+
+        # If the token is valid, return the menu
         return {"menu": "Welcome to your protected menu, authenticated user!"}
     except jwt.PyJWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise HTTPException(status_code=401, detail="Invalid token or expired session")
+
 
 @app.get("/protected")
 async def read_protected(token: str = Depends(oauth2_scheme)):
