@@ -181,8 +181,6 @@ const ArchitecturalDashboard = () => {
             </IconButton>
           </Toolbar>
         </AppBar>
-
-        {/* Sidebar */}
         <Drawer open={sidebarOpen} onClose={handleSidebarToggle}>
           <List>
             <ListItem button onClick={() => router.push("/dashboard")}>

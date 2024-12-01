@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 const theme = createTheme({
   palette: {
-    mode: "dark", // Dark mode theme
+    mode: "dark", 
     primary: {
       main: "#FF8C00", // Orange color
     },
@@ -19,7 +19,7 @@ const theme = createTheme({
       paper: "#1c1c1c", // Dark paper background for cards
     },
     text: {
-      primary: "#ffffff", // White text for dark mode
+      primary: "#ffffff", 
       secondary: "#b0b0b0", // Light gray text for secondary content
     },
   },
@@ -38,7 +38,7 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: "#2c3e50", // Darker AppBar background
+          backgroundColor: "#2c3e50", 
         },
       },
     },
@@ -108,12 +108,11 @@ const LoginPage = () => {
             mt: 8,
           }}
         >
-          {/* Login text inside an outlined box with orange color */}
           <Box
             sx={{
-              border: '2px solid #FF8C00', // Orange border
-              borderRadius: 2, // Rounded corners
-              padding: '8px 16px', // Padding inside the box
+              border: '2px solid #FF8C00', 
+              borderRadius: 2, 
+              padding: '8px 16px', 
               mb: 3,
             }}
           >
@@ -121,11 +120,11 @@ const LoginPage = () => {
               variant="h5"
               component="h1"
               sx={{
-                color: '#FF8C00', // Orange text color
+                color: '#FF8C00', 
                 fontWeight: 'bold',
               }}
             >
-              Login
+              Логін
             </Typography>
           </Box>
 
