@@ -5,49 +5,48 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-// Your theme definition
 const theme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: "dark", // Dark mode theme
     primary: {
-      main: '#1db954', // Spotify Green or any other green shade
+      main: "#FF8C00", // Orange color
     },
     secondary: {
-      main: '#03DAC6',
+      main: "#03DAC6", // Secondary light green or teal
     },
     background: {
-      default: '#121212',
-      paper: '#1c1c1c',
+      default: "#121212", // Dark background
+      paper: "#1c1c1c", // Dark paper background for cards
     },
     text: {
-      primary: '#ffffff',
-      secondary: '#b0b0b0',
+      primary: "#ffffff", // White text for dark mode
+      secondary: "#b0b0b0", // Light gray text for secondary content
     },
   },
   typography: {
-    fontFamily: 'Roboto, Arial, sans-serif',
+    fontFamily: "Roboto, Arial, sans-serif", // Choose a modern font
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: 'none',
-          borderRadius: '8px',
+          textTransform: "none", // Disable uppercased text for buttons
+          borderRadius: "8px", // Round corners
         },
       },
     },
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: '#2c3e50',
+          backgroundColor: "#2c3e50", // Darker AppBar background
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: '8px',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+          borderRadius: "8px", // Round card corners
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)", // Soft shadow effect
         },
       },
     },
@@ -109,10 +108,10 @@ const LoginPage = () => {
             mt: 8,
           }}
         >
-          {/* Login text inside an outlined box with green color */}
+          {/* Login text inside an outlined box with orange color */}
           <Box
             sx={{
-              border: '2px solid #1db954', // Green border
+              border: '2px solid #FF8C00', // Orange border
               borderRadius: 2, // Rounded corners
               padding: '8px 16px', // Padding inside the box
               mb: 3,
@@ -122,7 +121,7 @@ const LoginPage = () => {
               variant="h5"
               component="h1"
               sx={{
-                color: '#1db954', // Green text color
+                color: '#FF8C00', // Orange text color
                 fontWeight: 'bold',
               }}
             >
@@ -169,7 +168,7 @@ const LoginPage = () => {
             <Typography variant="body2" color="text.secondary">
               Don't have an account?{' '}
               <Link href="/register" passHref>
-                <Button variant="text" sx={{ color: '#1976d2' }}>
+                <Button variant="text" sx={{ color: '#FF8C00' }}>
                   Register
                 </Button>
               </Link>

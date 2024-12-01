@@ -10,16 +10,14 @@ import os
 # FastAPI instance
 app = FastAPI()
 
-# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Frontend URL
+    allow_origins=["http://localhost:3000"],  
     allow_credentials=True,
     allow_methods=["*"],  
     allow_headers=["*"],  
 )
 
-# Security setup
 SECRET_KEY = os.getenv("SECRET_KEY", "your_secret_key")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -35,7 +33,6 @@ fake_users_db = {
     }
 }
 
-# Pydantic models
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -47,7 +44,6 @@ class User(BaseModel):
 class UserInDB(User):
     hashed_password: str
 
-# Helper functions
 def verify_password(plain_password, hashed_password):
     """Verify plain password against hashed password."""
     return pwd_context.verify(plain_password, hashed_password)

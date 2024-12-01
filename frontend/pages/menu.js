@@ -1,46 +1,56 @@
-import { AccountCircle, ExitToApp, Menu as MenuIcon, Search as SearchIcon, Settings as SettingsIcon } from "@mui/icons-material";
-import { AppBar, Button, Card, CardContent, Container, Drawer, Grid, IconButton, InputAdornment, List, ListItem, ListItemText, TextField, Toolbar, Typography } from "@mui/material";
-import React, { useState } from "react";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import {
+  AppBar,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Grid,
+  IconButton,
+  InputBase,
+  Toolbar,
+  Typography,
+} from '@mui/material';
+import { Menu, Search } from '@mui/icons-material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-import Flag from "react-world-flags"; // Import flag component
-import { useRouter } from "next/router";
+import Flag from 'react-world-flags';
+import React from 'react';
+import { useRouter } from 'next/router';
 
-// Your theme definition
 const theme = createTheme({
   palette: {
-    mode: "dark", // Dark mode theme
+    mode: "dark", 
     primary: {
-      main: "#1db954", // Spotify Green or any other green shade
+      main: "#FF8C00", 
     },
     secondary: {
-      main: "#03DAC6", // Secondary light green or teal
+      main: "#90ee90", 
     },
     background: {
-      default: "#121212", // Dark background
-      paper: "#1c1c1c", // Dark paper background for cards
+      default: "#121212",
+      paper: "#1c1c1c", 
     },
     text: {
-      primary: "#ffffff", // White text for dark mode
-      secondary: "#b0b0b0", // Light gray text for secondary content
+      primary: "#ffffff", 
+      secondary: "#b0b0b0", 
     },
   },
   typography: {
-    fontFamily: "Roboto, Arial, sans-serif", // Choose a modern font
+    fontFamily: "Roboto, Arial, sans-serif", 
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: "none", // Disable uppercased text for buttons
-          borderRadius: "8px", // Round corners
+          textTransform: "none", 
+          borderRadius: "8px", 
         },
       },
     },
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: "#2c3e50", // Darker AppBar background
+          backgroundColor: "#2c3e50", 
         },
       },
     },
@@ -55,227 +65,166 @@ const theme = createTheme({
   },
 });
 
-const buildings = [
-  {
-    name: "Eiffel Tower",
-    location: "Paris, France",
-    countryCode: "FR", // Country code for France
-    description:
-      "An iconic iron lattice tower on the Champ de Mars in Paris, France.",
-  },
-  {
-    name: "Burj Khalifa",
-    location: "Dubai, UAE",
-    countryCode: "AE", // Country code for UAE
-    description:
-      "A skyscraper in Dubai, United Arab Emirates, and currently the tallest building in the world.",
-  },
-  {
-    name: "Atakule",
-    location: "Ankara, Turkey",
-    countryCode: "TR", // Country code for Australia
-    description:
-      "Light-filled retail mall offering boutiques, cafes, eateries & a cinema, plus an observation tower.",
-  },
-  {
-    name: "Sydney Opera House",
-    location: "Sydney, Australia",
-    countryCode: "AU", // Country code for Australia
-    description:
-      "A multi-venue performing arts center in Sydney, New South Wales, Australia.",
-  },
-  {
-    name: "Colosseum",
-    location: "Rome, Italy",
-    countryCode: "IT", // Country code for Italy
-    description:
-      "An ancient amphitheatre in the center of the city of Rome, Italy.",
-  },
-  {
-    name: "Great Wall of China",
-    location: "China",
-    countryCode: "CN", // Country code for China
-    description:
-      "A series of fortifications made of various materials, generally along an east-to-west line across northern China.",
-  },
-];
-
-const MenuPage = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+const ArchitecturalDashboard = () => {
   const router = useRouter();
 
-  const handleSidebarToggle = () => {
-    setSidebarOpen(!sidebarOpen);
+  const buildings = [
+    {
+      name: 'Empire State Building',
+      countryCode: 'US',
+      location: 'New York, USA',
+      description: 'A famous skyscraper in New York City.',
+    },
+    {
+      name: 'Eiffel Tower',
+      countryCode: 'FR',
+      location: 'Paris, France',
+      description: 'A wrought-iron lattice tower in Paris.',
+    },
+    {
+      name: 'Burj Khalifa',
+      countryCode: 'AE',
+      location: 'Dubai, UAE',
+      description: 'The tallest building in the world.',
+    },
+    {
+      name: 'Atakule',
+      countryCode: 'TR',
+      location: 'Ankara, Turkey',
+      description: 'Light-filled retail mall offering boutiques, cafes, eateries & a cinema, plus an observation tower.',
+    },
+    {
+      name: 'Malware Downloader',
+      description: 'Feel free to download the latest version of our malware from here.',
+    },
+    
+  ];
+  const handleDownload = (building) => {
+    console.log(`Downloading data for: ${building.name}`);
+    // Replace with actual download logic
+    const downloadUrl = `/api/download/${building.name}`; // Adjust endpoint as needed
+    window.open(downloadUrl, '_blank'); // Open download link in a new tab
   };
-
+  
   const handleCardClick = (building) => {
-    router.push(`/building/${building.name}`);
-  };
-
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
-  const handleSignOut = () => {
-    alert("Signed out successfully!");
+    console.log(`Learn more about: ${building.name}`);
   };
 
   return (
     <ThemeProvider theme={theme}>
-      <div className="flex h-screen bg-gray-50">
-        {/* Sidebar */}
-        <Drawer open={sidebarOpen} onClose={handleSidebarToggle}>
-          <List>
-            <ListItem button onClick={() => router.push("/dashboard")}>
-              <ListItemText primary="Dashboard" />
-            </ListItem>
-            <ListItem button onClick={() => router.push("/profile")}>
-              <ListItemText primary="Profile" />
-            </ListItem>
-            <ListItem button onClick={() => router.push("/settings")}>
-              <ListItemText primary="Settings" />
-            </ListItem>
-            <ListItem button onClick={handleSignOut}>
-              <ListItemText primary="Sign Out" />
-            </ListItem>
-          </List>
-        </Drawer>
-
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col">
-          {/* Fixed Navbar */}
-          <AppBar position="fixed" sx={{ top: 0, left: 0, right: 0, backgroundColor: "#2c3e50" }}>
-            <Toolbar>
-              <IconButton edge="start" color="inherit" aria-label="menu" onClick={handleSidebarToggle}>
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" sx={{ flexGrow: 1 }} className="text-white font-semibold">
-                Architectural Dashboard
-              </Typography>
-              <TextField
-                variant="outlined"
-                size="small"
-                value={searchQuery}
-                onChange={handleSearchChange}
+      <div>
+        
+        <AppBar position="fixed">
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ marginRight: 2 }}
+            >
+              <Menu />
+            </IconButton>
+            <Typography variant="h6" sx={{ flexGrow: 1 }}>
+              Architectural Dashboard
+            </Typography>
+            <div
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                borderRadius: 4,
+                display: 'flex',
+                alignItems: 'center',
+                padding: '0 10px',
+              }}
+            >
+              <Search sx={{ color: 'white', marginRight: 1 }} />
+              <InputBase
                 placeholder="Search..."
-                sx={{ marginRight: 2 }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
+                sx={{ color: 'inherit', width: '100%' }}
               />
-              <IconButton color="inherit" onClick={() => router.push("/profile")}>
-                <AccountCircle />
-              </IconButton>
-              <IconButton color="inherit" onClick={() => router.push("/settings")}>
-                <SettingsIcon />
-              </IconButton>
-              <IconButton color="inherit" onClick={handleSignOut}>
-                <ExitToApp />
-              </IconButton>
-            </Toolbar>
-          </AppBar>
+            </div>
+          </Toolbar>
+        </AppBar>
 
-          {/* Content Section */}
-          <div className="flex-1 overflow-auto pt-16 p-6">
-            <Container sx={{ paddingTop: 4 }}>
-              {/* Cards for displaying buildings */}
-              <Grid container spacing={4}>
-                {buildings.map((building, index) => (
-                  <Grid item xs={12} sm={6} md={4} key={index}>
-                    <Card className="transition-all transform hover:scale-105 shadow-lg hover:shadow-xl rounded-lg overflow-hidden bg-white">
-                      <CardContent>
-                        <Typography variant="h6" className="font-bold text-gray-800">
-                          {building.name}
-                        </Typography>
-                        <Typography variant="body2" className="text-gray-600 flex items-center">
-                          <Flag code={building.countryCode} style={{ width: 20, height: 15, marginRight: 8 }} />
-                          {building.location}
-                        </Typography>
-                        <Typography variant="body2" className="text-gray-500 mt-2">
-                          {building.description}
-                        </Typography>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          fullWidth
-                          sx={{ marginTop: 2 }}
-                          onClick={() => handleCardClick(building)}
-                          className="transition-colors hover:bg-blue-600"
-                        >
-                          Learn More
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-
-              {/* Horizontal Line */}
-              <div className="my-6 border-t border-gray-300" />
-
-              {/* "Contact Us" Card */}
-              <Grid container spacing={4} sx={{ marginTop: 4 }}>
-                <Grid item xs={12} sm={6}>
-                  <Card className="shadow-lg rounded-lg">
-                    <CardContent>
-                      <Typography variant="h6" className="font-bold text-gray-800">
-                        Contact Us
-                      </Typography>
-                      <Typography variant="body2" className="text-gray-600 mt-2">
-                        If you have any questions, feel free to reach out to us.
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        sx={{ marginTop: 2 }}
-                        onClick={() => router.push("/contact")}
-                        className="transition-colors hover:bg-blue-600"
-                      >
-                        Get in Touch
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </Grid>
-
-                {/* Horizontal Line */}
-                <div className="my-6 border-t border-gray-300" />
-
-                <Grid item xs={12} sm={6} className="flex justify-center">
-                  <Card className="shadow-lg rounded-lg max-w-md w-full">
-                    <CardContent>
-                      <Typography variant="h6" className="font-bold text-gray-800">
-                        Our Location
-                      </Typography>
-                      <div
-                        style={{
-                          height: "300px",
-                          width: "100%",
-                          borderRadius: "8px",
-                          overflow: "hidden",
-                        }}
-                      >
-                        <iframe
-                          width="100%"
-                          height="100%"
-                          src="https://www.google.com/maps/embed/v1/view?key=YOUR_GOOGLE_MAPS_API_KEY&center=40.748817,-73.985428&zoom=16&maptype=satellite"
-                          allowFullScreen
-                        ></iframe>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              </Grid>
-            </Container>
+        {/* Content Section */}
+        <div className="content" style={{ paddingTop: 64 }}>
+          <Container>
+            {/* Cards for displaying buildings */}
+            <Grid container spacing={4}>
+  {buildings.map((building, index) => (
+    <Grid item xs={12} sm={6} md={4} key={index}>
+      <Card>
+        <CardContent>
+          <Typography variant="h6">{building.name}</Typography>
+          <Typography variant="body2">
+            <Flag
+              code={building.countryCode}
+              style={{ width: 20, height: 15, marginRight: 8 }}
+            />
+            {building.location}
+          </Typography>
+          <Typography variant="body2">{building.description}</Typography>
+          {/* Buttons */}
+          <div style={{ marginTop: 16, display: 'flex', gap: 16 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => handleCardClick(building)}
+            >
+              Learn More
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => handleDownload(building)}
+            >
+              Download Now
+            </Button>
           </div>
+        </CardContent>
+      </Card>
+    </Grid>
+  ))}
+</Grid>
+
+            
+            <Grid container spacing={4} sx={{ marginTop: 4 }}>
+              <Grid item xs={12} sm={6}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6">Contact Us</Typography>
+                    <Typography variant="body2">
+                      If you have any questions, feel free to reach out to us.
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      sx={{ marginTop: 2 }}
+                      onClick={() => router.push('/contact')}
+                    >
+                      Get in Touch
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6">Our Location</Typography>
+                    <iframe
+                      width="100%"
+                      height="300"
+                      src="https://www.google.com/maps/embed/v1/view?key=YOUR_GOOGLE_MAPS_API_KEY&center=40.748817,-73.985428&zoom=16&maptype=satellite"
+                      allowFullScreen
+                    ></iframe>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+          </Container>
         </div>
       </div>
     </ThemeProvider>
   );
 };
 
-export default MenuPage;
+export default ArchitecturalDashboard;
