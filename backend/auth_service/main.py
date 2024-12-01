@@ -1,3 +1,4 @@
+import logging
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,8 +8,10 @@ from datetime import datetime, timedelta
 import jwt
 import os
 
-# FastAPI instance
 app = FastAPI()
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,7 +31,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 fake_users_db = {
     "user@example.com": {
         "username": "user@example.com",
-        "hashed_password": "$2b$12$SigZ2aCT/Wyeg8rlxZiJDee08BunWJle.D3uyS2fOh/KxVXLeE7ei"  # Hashed password for "password"
+        "hashed_password": "$2b$12$SigZ2aCT/Wyeg8rlxZiJDee08BunWJle.D3uyS2fOh/KxVXLeE7ei"  
     }
 }
 
@@ -78,26 +81,31 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         )
     
     access_token = create_access_token(data={"sub": user.username})
+    logger.info(f"Login successful for user: {form_data.username}")
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.get("/menu")
 async def get_menu(token: str = Depends(oauth2_scheme)):
     """Protected route: Returns menu data for authenticated users."""
+    
+    logger.info("Received request to /menu endpoint")
+
     if not token:
-        # If no token is provided, return a 401 Unauthorized error
+        logger.warning("Unauthorized access attempt to /menu: No token provided")
         raise HTTPException(status_code=401, detail="Unauthorized access. Please log in.")
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
+            logger.warning("Unauthorized access attempt to /menu: Invalid token")
             raise HTTPException(status_code=401, detail="Invalid token")
 
-        # If the token is valid, return the menu
+        logger.info(f"Authorized user {username} accessed the /menu endpoint.")
         return {"menu": "Welcome to your protected menu, authenticated user!"}
     except jwt.PyJWTError:
+        logger.warning("Unauthorized access attempt to /menu: Invalid or expired token")
         raise HTTPException(status_code=401, detail="Invalid token or expired session")
-
 
 @app.get("/protected")
 async def read_protected(token: str = Depends(oauth2_scheme)):
