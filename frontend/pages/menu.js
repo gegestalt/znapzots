@@ -245,8 +245,7 @@ const ArchitecturalDashboard = () => {
                 <CardContent>
                   <Typography variant="h6">Contact Us</Typography>
                   <Typography variant="body2">
-                    Visit our office or get in touch with us for more information.
-                  </Typography>
+                  Відвідайте наш офіс або зв’яжіться з нами для отримання додаткової інформації.                  </Typography>
                   <div style={{ marginTop: 16, height: 300, width: '100%' }}>
                     <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
                       <GoogleMap
